@@ -1,21 +1,20 @@
 class Solution {
     public String freqAlphabets(String s) {
-        String ans = "";
-        int i = 0;
+        StringBuilder ans = new StringBuilder();
+        int i = s.length() - 1;
         
-        while (i < s.length()) {
-            // Check if we can form a two-digit number with a '#' at the 3rd place
-            if (i + 2 < s.length() && s.charAt(i + 2) == '#') {
-                int num = Integer.parseInt(s.substring(i, i + 2)); // correct way to get two-digit number
-                ans += (char)('a' + num - 1); // 'a' + 10 - 1 = 'j'
-                i += 3; // skip 3 chars (10#)
+        while (i >= 0) {
+            if (s.charAt(i) == '#') {
+                int num = Integer.parseInt(s.substring(i - 2, i));
+                ans.append((char)('a' + num - 1));
+                i -= 3;
             } else {
-                int num = s.charAt(i) - '0'; // convert char to digit
-                ans += (char)('a' + num - 1);
-                i += 1;
+                int num = s.charAt(i) - '0';
+                ans.append((char)('a' + num - 1));
+                i--;
             }
         }
         
-        return ans;
+        return ans.reverse().toString();
     }
 }
