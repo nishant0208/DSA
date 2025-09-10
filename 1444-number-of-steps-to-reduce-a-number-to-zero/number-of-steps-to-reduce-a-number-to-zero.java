@@ -1,18 +1,16 @@
 class Solution {
-    int k=0;
     public int numberOfSteps(int num) {
-        if(num==0)
-        return 0;
-        if(num%2==0){
-        num=num/2;
-        k++;
+        return helper(num , 0);
+    }
+    private int helper(int num , int c)
+    {
+        if(num == 0)
+        {
+            return c;
         }
-        else {
-        num--;
-        k++;
+        if((num & 1) == 1){
+           return helper(--num , ++c);
         }
-         numberOfSteps(num);
-         return k;
-        
+        else return helper (num/2 , ++c);
     }
 }
