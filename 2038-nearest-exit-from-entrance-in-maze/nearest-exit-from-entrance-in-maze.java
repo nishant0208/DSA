@@ -1,32 +1,37 @@
 class Solution {
     public int nearestExit(char[][] maze, int[] entrance) {
-        int n = maze.length, m = maze[0].length;
-        boolean[][] vis = new boolean[n][m];
-        Queue<int[]> q = new LinkedList<>();
+        int n = maze.length;
+        int m = maze[0].length;
 
-        vis[entrance[0]][entrance[1]] = true;
-        q.offer(new int[]{0, entrance[0], entrance[1]});  // {steps, row, col}
-        
-        int[] dRow = {-1, 0, 1, 0};
-        int[] dCol = {0, 1, 0, -1};
-        
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int steps = cur[0], r = cur[1], c = cur[2];
+        Deque<int[]> queue = new ArrayDeque<>();
+        int[][] directs = {{-1,0}, {1,0}, {0,-1}, {0,1}};
 
-            if ((r == 0 || c == 0 || r == n-1 || c == m-1)
-                && !(r == entrance[0] && c == entrance[1])) {
-                return steps;
-            }
+        int count = 0;
+        queue.addLast(entrance);
+        maze[entrance[0]][entrance[1]] = '+';
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
             
-            for (int i = 0; i < 4; i++) {
-                int nr = r + dRow[i], nc = c + dCol[i];
-                if (nr >= 0 && nr < n && nc >= 0 && nc < m
-                    && !vis[nr][nc] && maze[nr][nc] == '.') {
-                    vis[nr][nc] = true;
-                    q.offer(new int[]{steps + 1, nr, nc});
+            for (int i = 0; i < size; i++) {
+                int[] curPos = queue.pollFirst();
+                for (int[] direct : directs) {
+                    int nr = curPos[0] + direct[0];
+                    int nc = curPos[1] + direct[1];
+
+                    if (nr < 0 || nr >= n || nc < 0 || nc >= m)
+                        continue;
+                    else if (maze[nr][nc] == '+')
+                        continue;
+                    else if (nr == 0 || nr == n - 1 || nc == 0 || nc == m - 1)
+                        return count + 1;
+                    else {
+                        maze[nr][nc] = '+';
+                        queue.addLast(new int[]{nr, nc});
+                    }
                 }
             }
+            count++;
         }
         return -1;
     }
