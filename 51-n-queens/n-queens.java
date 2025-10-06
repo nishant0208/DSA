@@ -1,55 +1,40 @@
 class Solution {
+    private List<List<String>> results = new ArrayList<>();
 
-    public boolean isPossible(char[][] board, int col, int row, List<List<String>> ans) {
-        //CHECK VERTICALLY
-        for (int i = row; i >= 0; i--) {
-            if (board[i][col] == 'Q') {
-                return false;
-            }
-        }
-        //CHECK LEFT UPPER DIAGONAL
-        for (int i = row, j = col; (i >= 0 && j >= 0); i--, j--) {
-            if (board[i][j] == 'Q') {
-                return false;
-            }
-        }
-        //CHECK RIGHT UPPER DIAGONAL
-        for (int i = row, j = col; (j < board.length && i >= 0); i--, j++) {
-            if (board[i][j] == 'Q') {
-                return false;
-            }
-        }
-        return true;
+    public List<List<String>> solveNQueens(int n) {
+        char[][] board = new char[n][n];
+        for (char[] row : board)
+            Arrays.fill(row, '.');
+        backtrack(0, n, 0, 0, 0, board);
+        return results;
     }
 
-    public void helperQueen(char[][] board, List<List<String>> ans, int row, int totalNoOfQueen){
-        if (totalNoOfQueen == row) {
-            List<String> temp = new ArrayList<>();
-            for (char[] arr : board) {
-                temp.add(new String(arr));
-            }
-            ans.add(temp);
+    private void backtrack(int row, int n, int cols, int diag1, int diag2, char[][] board) {
+        if (row == n) {
+            List<String> solution = new ArrayList<>();
+            for (char[] r : board)
+                solution.add(new String(r));
+            results.add(solution);
             return;
         }
-        for (int i =0; i < totalNoOfQueen; i++) {
-            if (isPossible(board, i, row, ans )) {
-                board[row][i] = 'Q'; //MARK
-                helperQueen(board, ans, row+1, totalNoOfQueen);//RECALL
-                board[row][i] = '.'; //UNMARK
-            }
+
+        int available = ((1 << n) - 1) & ~(cols | diag1 | diag2);
+
+        while (available != 0) {
+            int position = available & -available;
+            int col = Integer.bitCount(position - 1);
+
+            board[row][col] = 'Q';
+
+            backtrack(row + 1, n,
+                    cols | position,
+                    (diag1 | position) << 1,
+                    (diag2 | position) >> 1,
+                    board);
+
+            board[row][col] = '.';
+
+            available &= available - 1;
         }
-    }
-   
-    public List<List<String>> solveNQueens(int n) {
-        List<List<String>> ans = new ArrayList<>();
-        char[][] board = new char[n][n]; //create a board of nxn
-        for (int i = 0; i < n; i++) {
-            for (int j =0; j < n; j++) {
-                board[i][j] = '.'; // Mark every square with '.' initially.
-            }
-        }
-        helperQueen(board, ans, 0, n);
-        return ans;
-        
     }
 }
