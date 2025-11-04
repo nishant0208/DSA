@@ -4,7 +4,6 @@ class Solution {
         char[] t1 = t.toCharArray();
         Arrays.sort(s1);
         Arrays.sort(t1);
-        if(Arrays.equals(s1,t1))return true;
-        return false;
+        return Arrays.equals(s1,t1);
     }
 }
